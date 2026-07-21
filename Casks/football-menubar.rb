@@ -8,7 +8,7 @@ cask "football-menubar" do
   #      shasum -a 256 FootballMenuBar-1.0.0.zip
   #    Paste the hash below. While testing you MAY temporarily use
   #    `sha256 :no_check` to skip verification, but pin a real hash for release.
-  sha256 "3e8d0a0fe0a606b99f464e615fd0596aa287546c7091ec0b156d8272908d9e2f"
+  sha256 "e183b53d2a2f0bb00216f8f95abf831f977a1a653d74bf18def518baf31b68c8"
   # ───────────────────────────────────────────────────────────────────────
 
   # Download URL for the release asset. This assumes the release workflow

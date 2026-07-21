@@ -22,7 +22,8 @@ cask "football-menubar" do
   homepage "https://github.com/VillegasMich/football-tracker-menubar"
 
   # App is macOS 13 (Ventura) or later, per Package.swift / Info.plist.
-  depends_on macos: ">= :ventura"
+  # The symbol form already means "this version or newer".
+  depends_on macos: :ventura
 
   # Name of the .app bundle inside the downloaded zip. Must match exactly what
   # build.sh produces (currently "FootballMenuBar.app").
@@ -42,22 +43,13 @@ cask "football-menubar" do
   # Developer ID + notarization. Homebrew quarantines downloaded casks, so on
   # first launch macOS will block it as "unidentified developer".
   #
-  # Until you notarize, either:
-  #   • tell users to right-click the app in /Applications and choose "Open"
-  #     the first time, OR
-  #   • uncomment the caveats block below to surface the workaround, OR
-  #   • strip quarantine automatically after install (uncomment postflight).
-  #
-  # caveats <<~EOS
-  #   FootballMenuBar is not notarized yet. On first launch, right-click the
-  #   app in /Applications and choose "Open", or run:
-  #     xattr -dr com.apple.quarantine "/Applications/FootballMenuBar.app"
-  # EOS
-  #
-  # postflight do
-  #   system_command "/usr/bin/xattr",
-  #                  args: ["-dr", "com.apple.quarantine",
-  #                         "#{appdir}/FootballMenuBar.app"]
-  # end
+  # Since the app is not notarized, strip the Homebrew-applied quarantine
+  # flag after install so it launches without Gatekeeper silently killing it.
+  # Remove this block once the app is signed with a Developer ID + notarized.
+  postflight do
+    system_command "/usr/bin/xattr",
+                   args: ["-dr", "com.apple.quarantine",
+                          "#{appdir}/FootballMenuBar.app"]
+  end
   # ───────────────────────────────────────────────────────────────────────
 end

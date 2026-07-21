@@ -15,7 +15,7 @@ cask "football-menubar" do
   # attaches an asset named exactly "FootballMenuBar-<version>.zip" to a tag
   # named "v<version>" on the app repo. Adjust the filename here if your
   # build.sh names the zip differently.
-  url "https://github.com/VillegasMich/football-tracker-menubar/releases/download/v1.0.0/FootballMenuBar-1.0.0.zip"
+  url "https://github.com/VillegasMich/football-tracker-menubar/releases/download/v#{version}/FootballMenuBar-#{version}.zip"
 
   name "Football Menu Bar"
   desc "Live football scores in your macOS menu bar"

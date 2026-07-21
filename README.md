@@ -26,17 +26,64 @@ brew upgrade --cask football-menubar
 
 ## Maintainer notes
 
-Each release of an app requires updating its cask in `Casks/`:
+> Day-to-day app development happens in the app repo — build and run the app
+> directly there with `./build.sh && open FootballMenuBar.app`. The steps below
+> are only for verifying that the **published cask** installs the released build
+> correctly, before pushing this tap to everyone.
 
-1. Build and zip the `.app` in the app repo.
-2. Cut a GitHub Release with the zip attached (tag `v<version>`).
-3. In the cask file, bump `version` and paste the new `sha256`
-   (`shasum -a 256 <zip>`).
+### Cutting a release
+
+Each app release requires updating its cask in `Casks/`:
+
+1. In the app repo, bump the version and build the zip:
+   `VERSION=1.2.3 ./build.sh` (prints the `sha256` at the end).
+2. Cut a GitHub Release tagged `v<version>` with `FootballMenuBar-<version>.zip`
+   attached. Pushing the `v*` tag triggers the release workflow, which builds
+   and attaches the zip automatically.
+3. In `Casks/football-menubar.rb`, bump `version` and paste the new `sha256`.
+   (The `url` uses `#{version}`, so it updates itself.)
 4. Commit and push this repo.
 
-Validate a cask locally before pushing:
+### Testing a release locally before publishing
+
+Homebrew can treat a local clone of this repo as the tap, so you can install and
+verify the cask without pushing anything public.
+
+**One-time setup** — point the tap name at this local folder:
 
 ```sh
-brew audit --cask --new Casks/football-menubar.rb
-brew style Casks/football-menubar.rb
+brew untap VillegasMich/tap 2>/dev/null   # remove any existing (remote) tap
+brew tap VillegasMich/tap /Users/manuel.villegas/Documents/Personal/homebrew-tap
+brew trust VillegasMich/tap               # local taps require an explicit trust
+```
+
+> Note: `brew tap <name> <path>` uses the folder as a git **remote** and clones
+> it — so only *committed* changes are visible to Homebrew, not your working
+> tree.
+
+**Each iteration** — after editing the cask, commit, refresh Homebrew's clone,
+then reinstall:
+
+```sh
+git add Casks/football-menubar.rb && git commit -m "…"   # in this repo
+git -C "$(brew --repository VillegasMich/tap)" pull       # pull into brew's clone
+brew reinstall --cask football-menubar
+open /Applications/FootballMenuBar.app
+```
+
+Validate the cask (audit **by name** — the old file-path form is disabled):
+
+```sh
+brew audit --cask VillegasMich/tap/football-menubar
+brew style VillegasMich/tap/football-menubar
+```
+
+The audit downloads the release zip to verify its `sha256`, so the matching
+GitHub Release must already be published (step 2 above).
+
+**Switch back to the public tap** when you're done testing:
+
+```sh
+brew untap VillegasMich/tap
+brew tap VillegasMich/tap                  # clones from GitHub
 ```
